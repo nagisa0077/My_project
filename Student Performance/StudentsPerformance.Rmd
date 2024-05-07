@@ -1,0 +1,31 @@
+---
+title: "student performance"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+
+```
+
+Column {data-width=320}
+-------------------------------------
+    
+### variable
+    
+```{r}
+
+```
+   
+Column {.tabset}
+-------------------------------------
+   
+### PLOT
+
+```{r}
+```   
+ 
+### MODEL
+    
+```{r}
+```

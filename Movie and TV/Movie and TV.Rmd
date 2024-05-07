@@ -1,0 +1,233 @@
+---
+title: "Movie and TV"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+library(GGally)
+library(lubridate)
+library(reshape2)
+library(scales)
+library(tidytext)
+library(wordcloud)
+
+# data
+data <- data.o <- read.csv("netflix_titles.csv")
+data <- data %>% mutate_if(is.character, ~na_if(., "")) %>% 
+          mutate(date_added = mdy(date_added))
+data$date_added <- format(data$date_added,"%Y")
+data$date_added <- as.numeric(data$date_added)
+movie <- data[which(data$type=='Movie'),]
+TV <- data[which(data$type=='TV Show'),]
+```
+
+## 資料描述
+
+```{r}
+variable <- colnames(data);variable
+summary(data)
+```
+
+### show_id 
+
+```{r echo=FALSE}
+length(unique(data$show_id)) # 沒有重複
+head(data$show_id)
+```
+
+### type
+
+```{r echo=FALSE}
+table(data$type)
+
+type <- data %>% count(type, sort = T) %>%
+  mutate(prop = paste0(round(n / sum(n) * 100, 0), "%"))
+ggplot(type, aes(x = "", y = prop, fill = type)) +
+  geom_bar(stat = "identity") +
+  coord_polar("y", start = 0) +
+  labs(title = "Type ratio") +
+  geom_text(aes(y = prop, label = prop),position = position_stack(vjust = 0.5),
+    size = 6, col = "white",fontface = "bold") +
+  scale_fill_manual (values = c('#F8766D', '#377eb8')) +
+  theme_void()
+```
+
+### title
+
+```{r echo=FALSE}
+length(unique(data$title))
+head(data$title)
+```
+
+
+### director
+
+```{r echo=FALSE}
+sum(is.na(data$director)) # 2634影片該資料集中沒有導演資料
+head(sort(table(data$director),decreasing = TRUE)) # 最多作品的導演
+```
+
+### cast
+
+```{r echo=FALSE}
+sum(is.na(data$cast)) # 825影片該資料集中沒有演員資料
+cast_list <- list()
+for(i in 1:length(data$cast)){
+  cast_list[[i]] <- strsplit(data$cast[i], ",")
+}
+head(sort(table(unlist(cast_list)),decreasing = TRUE),10) # 最多作品的演員
+cast <- unlist(table(unlist(cast_list)))
+```
+
+### country
+
+```{r echo=FALSE}
+sum(is.na(data$country)) # 831影片該資料集中沒有國家資料
+data$country[is.na(data$country)] <- 'Other'
+
+country_m <- data %>% select(type, country)%>% filter(type == "Movie")
+country_list <- list()
+for(i in 1:length(country_m$country)){
+  country_list[[i]] <- strsplit(country_m$country[i], ",")
+}
+country_m <- data.frame(country = unlist(country_list))
+country_m <- country_m %>% count(country, sort = T)
+  
+country_t <- data %>% select(type, country)%>% filter(type == "TV Show")
+country_list <- list()
+for(i in 1:length(country_t$country)){
+  country_list[[i]] <- strsplit(country_t$country[i], ",")
+}
+country_t <- data.frame(country = unlist(country_list))
+country_t <- country_t %>% count(country, sort = T) 
+
+country <- merge(country_m, country_t, by = "country", suffixes = c("_movie", "_TV"), all = TRUE)
+country[is.na(country)] <- 0
+country <- head(country[order(-country$n_movie),])
+colnames(country) <- c('country', 'Movie', 'TV Show')
+country <- tidyr::gather(country , key = "Type", value = "Count", -country)
+
+ggplot(country, aes(x = country, y = Count, fill = Type)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(title = "Count by Country", x = "Country", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none") +
+  coord_flip()
+
+
+```
+
+### date_added
+
+```{r echo=FALSE, warning=FALSE}
+sum(is.na(data$date_added))
+date_added <- data.frame(merge(data.frame(table(movie$date_added)), data.frame(table(TV$date_added)), by = "Var1", suffixes = c("_movie", "_TV"), all = TRUE))
+date_added[is.na(date_added)] <- 0
+colnames(date_added) <- c("year", "count_movie", "count_TV")
+date_added$year <- as.numeric(as.character(date_added$year))
+date_added <- date_added[order(date_added$year), ]
+date_added$year <- as.Date(paste0(date_added$year, "-01-01"))
+
+ggplot(date_added, aes(x = as.Date(paste0(year, "-01-01")))) +
+  geom_line(aes(y = count_movie, color = "Movie"), size = 1.2) +
+  geom_line(aes(y = count_TV, color = "TV"), size = 1.2) +
+  scale_x_date(date_breaks = "2 year", date_labels = "%Y") +
+  labs(title = "Netflix Date added", x = "year", y = "count", color = "Type") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5),
+        plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values = c("Movie" = "#F8766D", "TV" = "#00BFC4"),
+                     labels = c("Movie", "TV"))
+```
+
+### release_year
+
+```{r echo=FALSE}
+sum(is.na(data$release_year))
+table(data$release_year)
+year <- data.frame(merge(data.frame(table(movie$release_year)), data.frame(table(TV$release_year)), by = "Var1", suffixes = c("_movie", "_TV"), all = TRUE))
+year[is.na(year)] <- 0
+colnames(year) <- c("year", "count_movie", "count_TV")
+year$year <- as.numeric(as.character(year$year))
+year <- year[order(year$year), ]
+year$year <- as.Date(paste0(year$year, "-01-01"))
+
+ggplot(year, aes(x = as.Date(paste0(year, "-01-01")))) +
+  geom_line(aes(y = count_movie, color = "Movie"), size = 1.2) +
+  geom_line(aes(y = count_TV, color = "TV"), size = 1.2) +
+  scale_x_date(date_breaks = "10 year", date_labels = "%Y") +
+  labs(title = "Number of Movie/TV show", x = "year", y = "count", color = "Type") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5),
+        plot.title = element_text(hjust = 0.5)) +
+  scale_color_manual(values = c("Movie" = "#F8766D", "TV" = "#00BFC4"),
+                     labels = c("Movie", "TV"))
+```
+
+### rating
+
+```{r echo=FALSE}
+rating <- data %>%  count(rating, sort = T)
+
+rating_m <- data %>% select(type, rating) %>% 
+  filter(type == "Movie") %>% count(rating, sort = T)
+  
+rating_t <- data %>% select(type, rating) %>% 
+  filter(type == "TV Show") %>% count(rating, sort = T)
+  
+rating <- rating[-c(13,16,17,18),] # 誤植和NA
+rating_m <- rating_m[-c(15,16,17,18),] # 誤植和NA
+rating_t <- rating_t[-c(9),] # 誤植和NA
+
+
+ggplot(rating, aes(x = reorder(rating, n), y = n, fill = rating)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(title = "Count by Rating", x = "Rating", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none") +
+  coord_flip()
+```
+
+### duration
+
+```{r echo=FALSE, warning=FALSE}
+movie_duration <- data.frame(movie_duration = as.numeric(gsub(paste(c('min'), collapse = "|"), "", movie$duration)))
+TV_duration <- data.frame(TV_duration = as.numeric(gsub(paste(c('Seasons','Season'), collapse = "|"), "", TV$duration)))
+
+# movie
+summary(movie_duration)
+p1 <- ggplot(movie_duration, aes(x = movie_duration)) +
+  geom_histogram(binwidth = 1, fill = "#F8766D")
+
+# TV
+summary(TV_duration)
+table(TV_duration)
+p2 <- ggplot(TV_duration , aes(x = TV_duration)) +
+  geom_bar(binwidth = 1, fill = "#00BFC4")
+
+grid.arrange(p1,p2,nrow =1, ncol = 2)
+```
+
+### listed_in
+```{r echo=FALSE}
+listed_in_list <- list()
+for(i in 1:length(data$listed_in)){
+  listed_in_list[[i]] <- strsplit(data$listed_in[i], ",")
+}
+head(sort(table(unlist(listed_in_list)),decreasing = TRUE)) # 最多作品的演員
+```
+
+### description
+```{r echo=FALSE, warning=FALSE}
+words <- data %>% select(type, show_id, description) %>%
+  unnest_tokens(word, description) %>%
+  anti_join(stop_words)
+count_word <- words %>%count(word, sort = TRUE)
+wordcloud(words = count_word$word,freq = count_word$n, 
+          min.freq = 50,max.words = nrow(count_word), 
+          random.order = FALSE,rot.per = 0.1,  
+          colors = brewer.pal(8, "Dark2"))
+```
+
