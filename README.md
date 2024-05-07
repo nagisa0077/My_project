@@ -1,7 +1,7 @@
 "# My_project" 
 1. Student Performance
     * 利用ggplot了解各變量之間的關係
-    * 嘗試以現有變數建立模型預測學生表現但效果不佳
+    * 嘗試以現有變數建立GLM模型預測學生表現但效果不佳
 
 2. Movie and TV
     * Amazon prime/ Disney+/ Netflix 三平台電影與IMDb評分連結
