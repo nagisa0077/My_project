@@ -7,8 +7,8 @@ library(caret)
 library(e1071)
 
 #### read data ####
-train <-  read.csv("Digit Recognizer/mnist_train.csv")
-test <-  read.csv("Digit Recognizer/mnist_test.csv")
+train <-  read.csv("D:\\nagisa\\NAGISA\\求職\\作品資料\\Digit Recognizer\\mnist_train.csv")
+test <-  read.csv("D:\\nagisa\\NAGISA\\求職\\作品資料\\Digit Recognizer\\mnist_test.csv")
 ####檢查data 大小####
 dim(train)
 dim(test)
