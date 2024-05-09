@@ -36,7 +36,7 @@ test <- test[,!names(test) %in% drop.cols]
 BNW <- c("white", "black")
 CUSTOM_BNW <- colorRampPalette(colors = BNW)
 
-#train
+# train
 par(mfrow = c(4, 3), pty = "s", mar = c(1, 1, 1, 1), xaxt = "n", yaxt = "n")
 images_digits_0_9 <- array(dim = c(10, 28 * 28))
 for (digit in 0:9) {
@@ -47,7 +47,7 @@ for (digit in 0:9) {
   image(1:28, 1:28, z, main = digit, col = CUSTOM_BNW(255))
 }
 
-#test
+# test
 par(mfrow = c(4, 3), pty = "s", mar = c(1, 1, 1, 1), xaxt = "n", yaxt = "n")
 images_digits_0_9 <- array(dim = c(10, 28 * 28))
 for (digit in 0:9) {
