@@ -11,7 +11,7 @@ library(wordcloud)
 library(tidyr)
 library(stringr)
 # Netflix viedo
-data_n <- data_n.o <- read.csv('Movie and TV/netflix_titles.csv') 
+data_n <- data_n.o <- read.csv('D:\\nagisa\\NAGISA\\求職\\作品資料\\Movie and TV\\netflix_titles.csv') 
 data_n <- data_n %>% mutate_if(is.character, ~na_if(., "")) %>% 
           mutate(date_added = mdy(date_added))
 data_n$date_added <- format(data_n$date_added,"%Y")
@@ -20,7 +20,7 @@ movie_n <- data_n[which(data_n$type=='Movie'),]
 TV_n <- data_n[which(data_n$type=='TV Show'),]
 
 # Disney viedo
-data_d <- data_d.o <- read.csv('Movie and TV/disney_plus_titles.csv') 
+data_d <- data_d.o <- read.csv('D:\\nagisa\\NAGISA\\求職\\作品資料\\Movie and TV\\disney_plus_titles.csv') 
 data_d <- data_d %>% mutate_if(is.character, ~na_if(., "")) %>% 
   mutate(date_added = mdy(date_added))
 data_d$date_added <- format(data_d$date_added,"%Y")
@@ -29,7 +29,7 @@ movie_d <- data_d[which(data_d$type=='Movie'),]
 TV_d <- data_d[which(data_d$type=='TV Show'),]
 
 # Amazon_prime viedo
-data_a <- data_a.o <- read.csv('Movie and TV/amazon_prime_titles.csv') 
+data_a <- data_a.o <- read.csv('D:\\nagisa\\NAGISA\\求職\\作品資料\\Movie and TV\\amazon_prime_titles.csv') 
 data_a <- data_a %>% mutate_if(is.character, ~na_if(., "")) %>% 
   mutate(date_added = mdy(date_added))
 data_a$date_added <- format(data_a$date_added,"%Y")
@@ -38,20 +38,20 @@ movie_a <- data_a[which(data_a$type=='Movie'),]
 TV_a <- data_a[which(data_a$type=='TV Show'),]
 
 # IMBD viedo 
-# IMDb <- read.csv('Movie and TV/Top 1000 IMDB movies.csv')
+# IMDb <- read.csv('D:\\nagisa\\NAGISA\\求職\\作品資料\\Movie and TV\\Top 1000 IMDB movies.csv')
 # IMDb <- IMDb[,-1]
 # IMDb$Year.of.Release <- gsub("\\(|\\)", "", IMDb$Year.of.Release) # 刪除()
 # colnames(IMDb) <- c('title', 'release_year', 'duration', 'IMDb_rating', 'score',
 #                     'vote', 'gross', 'description_IMDb')
 
-IMDb <- read.csv('Movie and TV/IMDbMovies.csv')
+IMDb <- read.csv('D:\\nagisa\\NAGISA\\求職\\作品資料\\Movie and TV\\IMDbMovies.csv')
 colnames(IMDb) <- c('title', 'description.IMDb', 'director', 'writer', 'listed.in',
                     'rating', 'release.year', 'duration','score', 'Number.of.Ratings',
                     'Budget','Gross.North.America', 'Gross','Opening.Weekend','Gross.Opening.Weekend')
 
 
 # Netflix user
-# user <- read.csv('Movie and TV/Netflix Userbase.csv')
+# user <- read.csv('D:\\nagisa\\NAGISA\\求職\\作品資料\\Movie and TV\\Netflix Userbase.csv')
 
 # Netflix movie & IMDb score
 dat_n <- merge(x = movie_n,y = IMDb, by = 'title')

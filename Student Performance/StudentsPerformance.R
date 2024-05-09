@@ -3,7 +3,7 @@ library(dplyr)
 library(gridExtra)
 library(GGally)
 library(caret)
-data <- data.o <- read.csv('StudentsPerformance.csv')
+data <- data.o <- read.csv('"D:\\nagisa\\NAGISA\\求職\\作品資料\\Student Performance\\StudentsPerformance.csv"')
 
 # head
 head(data)
