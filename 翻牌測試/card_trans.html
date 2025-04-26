@@ -132,32 +132,32 @@
 
 <body>
     <h1 id="page-title"
-        style="position: fixed; top: 0; width: 100%; text-align: center; padding: 20px 0 10px; border-bottom: 1px solid #ccc; background-color: #0061a2; margin: 0; font-size: 35px; color: rgb(209, 209, 209); z-index: 1000;">
+        style="position: fixed; top: 0; width: 100%; text-align: center; padding: 20px 0 10px; border-bottom: 1px solid #ccc; background-color: #0061a2; margin: 0; font-size: 45px; color: rgb(209, 209, 209); z-index: 1000;">
     </h1>
 
     <h2 id="sub-title"
-        style="position: fixed; top: 70px; width: 100%; text-align: center; padding: 25px 0 10px; background-color: #abd0e8; margin: 0; font-size: 25px; z-index: 1000; color: rgb(44, 44, 44);">
+        style="position: fixed; top: 90px; width: 100%; text-align: center; padding: 25px 0 10px; background-color: #abd0e8; margin: 0; font-size: 30px; z-index: 1000; color: rgb(44, 44, 44);">
     </h2>
 
-    <div id="card-container" style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 100px;"></div>
+    <div id="card-container" style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 200px;"></div>
 
     <div id="popup" class="popup">
         <div class="popup-content">
-            <h3>設定標題和截止時間</h3>
-            <label for="title-input">首頁標題：</label>
-            <input type="text" id="title-input" placeholder="請輸入首頁名稱"
+            <h3>作業和截止時間</h3>
+            <label for="title-input">訂正作業：</label>
+            <input type="text" id="title-input" placeholder="請輸入訂正名稱"
                 style="width: 70%; padding: 15px; margin: 10px 10px;">
             <div id="time-selection">
-                <label for="year-select">年：</label>
                 <select id="year-select"></select>
-                <label for="month-select">月：</label>
+                <label for="year-select">年</label>
                 <select id="month-select"></select>
-                <label for="day-select">日：</label>
+                <label for="month-select">月</label>
                 <select id="day-select"></select>
-                <label for="hour-select">時：</label>
+                <label for="day-select">日</label>
                 <select id="hour-select"></select>
-                <label for="minute-select">分：</label>
+                <label for="hour-select">時</label>
                 <select id="minute-select"></select>
+                <label for="minute-select">分</label>
             </div>
             <button class="confirm-button" onclick="setSettings()">確定</button>
 
